@@ -7,14 +7,11 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
-WORKDIR /app
+WORKDIR /flask_app
 
-ENV FLASK_APP=flaskr.py
+ENV FLASK_APP=app.py
 COPY . .
-
-#CMD ["flask", "run"]
 
 # second build
 FROM bash as bash
 COPY wait.sh wait.sh
-
