@@ -1,0 +1,22 @@
+name: Okteto Flask REST API CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install python
+      uses: actions/setup-python@v2
+
+    - name: Run python tests
+      env:
+        COUCHDB_URL: http://couchdb-admin:couchdb-password@database:5984
+      with:
+        python-version: 3
+      run: python3 -m pytest --log-cli-level=INFO
