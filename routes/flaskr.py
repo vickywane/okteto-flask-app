@@ -23,6 +23,7 @@ def create_app(app):
             }
         )
         customers = fetch_customers.json()
+        print(customers)
 
         if fetch_customers.status_code == 200:
             return {"status": "OK", 'customers': customers['docs']}
@@ -63,13 +64,6 @@ def create_app(app):
         print(delete_doc, "DELETE")
 
         if delete_doc.status_code == 200:
-            return {"status": "ok"}
+            return {"status": "DOCUMENT DELETED"}
         else:
             return {"status": "ERROR DELETING DOCUMENT"}, delete_doc.status_code
-        # try:
-        #     database.delete(doc)
-        #     return {'status': 'OK', 'message': 'Deleted record for: {}'.format(data['id'])}
-        # except ResourceConflict:
-        #     return {'error': 'conflict found for document:{}'.format(data[id])}, 500
-        # except ResourceNotFound:
-        #     return {'error': "document not found"}, 404

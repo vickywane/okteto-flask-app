@@ -10,27 +10,27 @@ services:
     volumes:
       - couchdb_data:/bitnami/couchdb
 
-#  api:
-#    depends_on:
-#      - database
-#    build:
-#      target: bash
-#      context: .
-##    command: ./wait.sh http://couchdb-admin:couchdb-password@database:5984
-#
-#  app:
-#    depends_on:
-#      - api
-#    build:
-#      target: python
-#      context: .
-#    environment:
-#      - FLASK_RUN_HOST=0.0.0.0
-#      - FLASK_RUN_PORT=5050
-#      - COUCHDB_URL=http://couchdb-admin:couchdb-password@database:5984
-#    command: flask run
-#    ports:
-#      - '5050:5050'
+  api:
+    depends_on:
+      - database
+    build:
+      target: bash
+      context: .
+#    command: ./wait.sh http://couchdb-admin:couchdb-password@database:5984
+
+  app:
+    depends_on:
+      - api
+    build:
+      target: python
+      context: .
+    environment:
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_RUN_PORT=5050
+      - COUCHDB_URL=http://couchdb-admin:couchdb-password@database:5984
+    command: flask run
+    ports:
+      - '5050:5050'
 
 volumes:
   couchdb_data:
