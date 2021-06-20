@@ -10,6 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+
     - uses: actions/checkout@v2
     - name: Install python
       uses: actions/setup-python@v2
@@ -19,3 +20,19 @@ jobs:
     - name: Install python dependencies
       run: pip install -r requirements.txt
 
+    - name: Login to Okteto Cloud
+      uses: okteto/login@master
+      with:
+        token: ${{ secrets.OKTETO_TOKEN }}
+
+    - name: Activate application namespace
+      uses: okteto/namespace@master
+      with:
+        namespace: vickywane
+
+    - name: Build and deploy application image to Production Okteto Namespace
+      if: ${{ github.event_name == 'push' }}
+      uses: okteto/deploy-stack@master
+      with:
+        name: okteto-flask-app
+        build: true
