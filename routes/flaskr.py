@@ -1,53 +1,69 @@
 import os
-
+import requests
 from flask import request
 from uuid import uuid4
-from couchdb import Server, ResourceConflict, ResourceNotFound
 
-print(os.environ.get('COUCHDB_URL'), 'URL')
-try:
-    couch = Server(url=os.environ['COUCHDB_URL'])
-    database = couch['customers']
+COUCH_CUSTOMER_DB = '{}/customers'.format(os.environ.get('COUCHDB_URL'))
 
 
-    def create_app(app):
-        @app.route('/')
-        def handle_default_route():
-            return {'status': 'OK', 'description': 'REST API for performing CRUD operations against a Couch database'}
+def create_app(app):
+    @app.route('/')
+    def handle_default_route():
+        return {'status': 'OK', 'description': 'REST API for performing CRUD operations against a Couch database'}
 
-        @app.route('/api/customer', methods=['GET'])
-        def handle_items_fetch():
-            mango_query = {
-                'selector': {'type': 'paid_customer'},
+    @app.route('/api/customer', methods=['GET'])
+    def handle_items_fetch():
+        fetch_customers = requests.post(
+            url='{}/_find'.format(COUCH_CUSTOMER_DB),
+            json={
+                "selector": {"type": "paid_customer"}
+            },
+            headers={
+                'Content-Type': 'application/json'
             }
+        )
+        customers = fetch_customers.json()
+        print(customers)
 
-            items = []
+        if fetch_customers.status_code == 200:
+            return {"status": "OK", 'customers': customers['docs']}
+        else:
+            return {'status': "ERROR CREATING USER"}, fetch_customers.status_code
 
-            for data in database.find(mango_query):
-                items.append(data)
+    @app.route('/api/customer', methods=['POST'])
+    def handle_items_post():
+        data = request.get_json()
 
-            return {"status": "OK", 'customers': items}
+        doc = {
+            "docs": [
+                {
+                    '_id': 'customer:{}'.format(uuid4().hex), 'subscription': 'PREMIUM', 'type': 'paid_customer',
+                    'name': data['name'], 'occupation': data['occupation']
+                }
+            ]
+        }
 
-        @app.route('/api/customer', methods=['POST'])
-        def handle_items_post():
-            data = request.get_json()
-            database.save(
-                {'_id': 'customer:{}'.format(uuid4().hex), 'subscription': 'PREMIUM', 'type': 'paid_customer',
-                 'name': data['name'], 'occupation': data['occupation']})
-            return {'status': 'OK', 'method': 'post'}
+        insert_doc = requests.post(
+            url='{}/_bulk_docs'.format(COUCH_CUSTOMER_DB),
+            json=doc,
+            headers={
+                'Content-Type': 'application/json'
+            }
+        )
 
-        @app.route('/api/customer', methods=['DELETE'])
-        def handle_items_delete():
-            data = request.get_json()
-            doc = dict(_id=data['id'], _rev=data['rev'])
+        if insert_doc.status_code == 201:
+            return {'status': 'USER CREATED'}
+        else:
+            return {'status': "ERROR CREATING USER"}, insert_doc.status_code
 
-            try:
-                database.delete(doc)
-                return {'status': 'OK', 'message': 'Deleted record for: {}'.format(data['id'])}
-            except ResourceConflict:
-                return {'error': 'conflict found for document:{}'.format(data[id])}, 500
-            except ResourceNotFound:
-                return {'error': "document not found"}, 404
+    @app.route('/api/customer', methods=['DELETE'])
+    def handle_items_delete():
+        data = request.get_json()
 
-except:
-    print("Error connecting to couchdb")
+        delete_doc = requests.head(url="{0}/{1}".format(COUCH_CUSTOMER_DB, data['id']))
+        print(delete_doc, "DELETE")
+
+        if delete_doc.status_code == 200:
+            return {"status": "DOCUMENT DELETED"}
+        else:
+            return {"status": "ERROR DELETING DOCUMENT"}, delete_doc.status_code
