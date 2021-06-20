@@ -11,7 +11,5 @@ WORKDIR /flask_app
 
 ENV FLASK_APP=app.py
 COPY . .
+RUN pytest
 
-# second build
-FROM bash as bash
-COPY wait.sh wait.sh

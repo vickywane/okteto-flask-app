@@ -19,8 +19,3 @@ jobs:
     - name: Install python dependencies
       run: pip install -r requirements.txt
 
-    - name: Run python tests
-      run:  python3 -m pytest --log-cli-level=INFO
-      env:
-        COUCHDB_URL: http://couchdb-admin:couchdb-password@database:5984
-

@@ -10,17 +10,9 @@ services:
     volumes:
       - couchdb_data:/bitnami/couchdb
 
-  api:
+  flask_app:
     depends_on:
       - database
-    build:
-      target: bash
-      context: .
-#    command: ./wait.sh http://couchdb-admin:couchdb-password@database:5984
-
-  app:
-    depends_on:
-      - api
     build:
       target: python
       context: .
