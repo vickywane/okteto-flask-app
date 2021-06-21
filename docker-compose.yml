@@ -10,7 +10,7 @@ services:
     volumes:
       - couchdb_data:/bitnami/couchdb
 
-  flask_app:
+  api:
     depends_on:
       - database
     build:
