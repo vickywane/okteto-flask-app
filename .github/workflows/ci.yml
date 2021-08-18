@@ -37,7 +37,7 @@ jobs:
         build: true
 
     - name: Run API tests agaisnt Staging Namespace
-      run: pytest
+      run: pytest -s
       env:
         STAGING_COUCHDB_URL: https://api-staging-${{ github.event.number }}-vickywane.cloud.okteto.net
 
