@@ -40,7 +40,7 @@ jobs:
       with:
         url: https://api-staging-${{ github.event.number }}-vickywane.cloud.okteto.net
         responseCode: 200
-        timeout: 2000
+        timeout: 5000
 
     - name: Run API tests agaisnt Staging Namespace
       run: pytest -s
