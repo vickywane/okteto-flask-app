@@ -36,6 +36,12 @@ jobs:
         name: staging-${{ github.event.number }}-vickywane
         build: true
 
+    - uses: nev7n/wait_for_response@v1
+      with:
+        url: https://api-staging-${{ github.event.number }}-vickywane.cloud.okteto.net
+        responseCode: 200
+        timeout: 2000
+
     - name: Run API tests agaisnt Staging Namespace
       run: pytest -s
       env:
