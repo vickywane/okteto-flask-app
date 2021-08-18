@@ -30,15 +30,23 @@ jobs:
       with:
         namespace: vickywane
 
-    - name: Build and deploy application image to Production Okteto Namespace
+    - name: Deploy to test Staging Okteto Namespace
+      uses: okteto/deploy-stack@master
+      with:
+        namespace: pr-staging-${{ github.event.number }}-namespace
+        build: true
+
+    - name: Run API tests agaisnt Staging Namespace
+      run: pytest
+      env:
+        STAGING_COUCHDB_URL: https://web-pr-${{ github.event.number }}-namespace.cloud.okteto.net
+
+    - name: Build and deploy application container to Okteto Flask Namespace
       if: ${{ github.event_name == 'push' }}
       uses: okteto/deploy-stack@master
       with:
         name: okteto-flask-app
         build: true
-
-    - name: Test CouchDB instance for CI
-      uses: cobot/couchdb-action@master
 
     - name: Test endpoints agaisnt the test CouchDB instance
       run: pytest

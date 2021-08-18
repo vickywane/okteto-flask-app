@@ -9,6 +9,7 @@ COUCH_CUSTOMER_DB = '{}/customers'.format(os.environ.get('COUCHDB_URL'))
 def create_app(app):
     @app.route('/')
     def handle_default_route():
+        requests.put(COUCH_CUSTOMER_DB)
         return {'status': 'OK', 'description': 'REST API for performing CRUD operations against a Couch database'}
 
     @app.route('/api/customer', methods=['GET'])
@@ -22,6 +23,7 @@ def create_app(app):
                 'Content-Type': 'application/json'
             }
         )
+
         customers = fetch_customers.json()
 
         if fetch_customers.status_code == 200:
@@ -49,7 +51,7 @@ def create_app(app):
                 'Content-Type': 'application/json'
             }
         )
-
+        print(insert_doc.status_code, insert_doc, '{}/_bulk_docs'.format(COUCH_CUSTOMER_DB))
         if insert_doc.status_code == 201:
             return {'status': 'USER CREATED'}
         else:
