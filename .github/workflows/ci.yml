@@ -36,14 +36,14 @@ jobs:
         name: staging-${{ github.event.number }}-vickywane
         build: true
 
-    - uses: nev7n/wait_for_response@v1
-      with:
-        url: https://api-staging-${{ github.event.number }}-vickywane.cloud.okteto.net
-        responseCode: 200
-        timeout: 5000
+#    - uses: nev7n/wait_for_response@v1
+#      with:
+#        url: https://api-staging-${{ github.event.number }}-vickywane.cloud.okteto.net
+#        responseCode: 200
+#        timeout: 5000
 
     - name: Run API tests agaisnt Staging Namespace
-      run: pytest -s
+      run: pytest
       env:
         STAGING_COUCHDB_URL: https://api-staging-${{ github.event.number }}-vickywane.cloud.okteto.net
 
@@ -53,8 +53,3 @@ jobs:
       with:
         name: okteto-flask-app
         build: true
-
-    - name: Test endpoints agaisnt the test CouchDB instance
-      run: pytest
-      env:
-        COUCHDB_URL: http://127.0.0.1:5984
