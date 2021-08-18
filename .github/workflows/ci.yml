@@ -36,3 +36,11 @@ jobs:
       with:
         name: okteto-flask-app
         build: true
+
+    - name: Test CouchDB instance for CI
+      uses: cobot/couchdb-action@master
+
+    - name: Test endpoints agaisnt the test CouchDB instance
+      run: pytest
+      env:
+        COUCHDB_URL: http://127.0.0.1:5984
