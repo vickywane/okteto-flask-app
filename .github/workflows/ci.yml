@@ -39,7 +39,7 @@ jobs:
     - name: Run API tests agaisnt Staging Namespace
       run: pytest
       env:
-        STAGING_COUCHDB_URL: https://web-staging${{ github.event.number }}-vickywane.cloud.okteto.net
+        STAGING_COUCHDB_URL: https://api-staging-${{ github.event.number }}-vickywane.cloud.okteto.net
 
     - name: Build and deploy application container to Okteto Flask Namespace
       if: ${{ github.event_name == 'push' }}
