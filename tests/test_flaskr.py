@@ -1,13 +1,7 @@
 import os
-import logging
 from requests import get, post
 
-log = logging.getLogger(__name__)
-
-# STAGING_API_ENDPOINT = os.environ.get("STAGING_COUCHDB_URL")
-
-print( os.environ.get("STAGING_COUCHDB_URL"), "STAGING COUCHDB URL HERE")
-STAGING_API_ENDPOINT = "https://api-staging-8-vickywane.cloud.okteto.net/"
+STAGING_API_ENDPOINT = os.environ.get("STAGING_COUCHDB_URL")
 
 
 def test_handle_default_route():
