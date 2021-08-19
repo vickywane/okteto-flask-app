@@ -25,14 +25,24 @@ jobs:
       with:
         token: ${{ secrets.OKTETO_TOKEN }}
 
-    - name: Activate application namespace
-      uses: okteto/namespace@master
+    - name: Create staging namespace
+      uses: okteto/create-namespace@master
       with:
-        namespace: vickywane
+        namespace: staging-${{ github.event.number }}-vickywane
 
-    - name: Build and deploy application image to Production Okteto Namespace
-      if: ${{ github.event_name == 'push' }}
+    - name: Deploy to Staging Flask Application Namespace
       uses: okteto/deploy-stack@master
       with:
-        name: okteto-flask-app
+        name: staging-${{ github.event.number }}-vickywane
         build: true
+
+    - uses: nev7n/wait_for_response@v1
+      with:
+        url: https://api-staging-${{ github.event.number }}-vickywane.cloud.okteto.net
+        responseCode: 200
+        timeout: 5000
+
+    - name: Run API tests against Staging Namespace
+      run: pytest
+      env:
+        STAGING_COUCHDB_URL: https://api-staging-${{ github.event.number }}-vickywane.cloud.okteto.net

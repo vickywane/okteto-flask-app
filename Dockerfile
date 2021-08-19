@@ -11,5 +11,5 @@ WORKDIR /flask_app
 
 ENV FLASK_APP=app.py
 COPY . .
-RUN pytest
+#RUN pytest
 
