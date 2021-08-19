@@ -40,9 +40,9 @@ jobs:
       with:
         url: https://api-staging-${{ github.event.number }}-vickywane.cloud.okteto.net
         responseCode: 200
-        timeout: 4000
+        timeout: 5000
 
-    - name: Run API tests agaisnt Staging Namespace
+    - name: Run API tests against Staging Namespace
       run: pytest
       env:
         STAGING_COUCHDB_URL: https://api-staging-${{ github.event.number }}-vickywane.cloud.okteto.net
